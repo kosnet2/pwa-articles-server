@@ -1,0 +1,25 @@
+{
+  "name": "pwa-articles-server",
+  "version": "1.0.0",
+  "description": "pwa-articles-server",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kosnet2/pwa-articles-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kosnet2/pwa-articles-server/issues"
+  },
+  "homepage": "https://github.com/kosnet2/pwa-articles-server#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
