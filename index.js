@@ -12,95 +12,113 @@ const baseUrl = 'https://hacker-news.firebaseio.com/v0/item/';
 const stories = [];
 
 class Item {
-    constructor({id, type, by, time}) {
-        this.id = id;
-        this.type = type;
-        this.by = by;
-        this.time = time;
-    }
+	constructor( { id, type, by, time } ) {
+		this.id = id;
+		this.type = type;
+		this.by = by;
+		this.time = time;
+	}
+
+	async populateKids(kids, cb) {
+		let newKids = [];
+
+		let promisedComments = new Promise( ( resolve, reject ) => {
+			let comments = kids.map( async ( id ) => {
+				return new Comment( await cb( id ), cb);
+			} );
+			resolve( comments );
+		} );
+		
+		promisedComments.then( ( promises ) => {
+			Promise.all( promises ).then( ( comments ) => {
+				newKids = [ ...comments ];
+			});
+		} );
+
+		return [...newKids];
+	}
 }
 
 class Story extends Item{
-    constructor({id, type, by, time, text, kids, url, score, title, descendants}) {
-        super({id, type, by, time})
-        this.text = text;
-        this.kids = [...kids];
-        this.url = url;
-        this.score = score;
-        this.title = title;
-        this.descendants = descendants;
-    }
+	constructor( { id, type, by, time, text, kids, url, score, title, descendants } ) {
+		super( { id, type, by, time } );
+		this.text = text;
+		this.kids = [ ...kids ];
+		this.url = url;
+		this.score = score;
+		this.title = title;
+		this.descendants = descendants;
+	}
+
+	async populateComments(cb) {
+		this.kids = await this.populateKids(this.kids, cb);
+	}
 }
 
 class Comment extends Item {
-    constructor({id, type, by, time, text, kids}) {
-        super({id, type, by, time});
-        this.text = text;
-        this.kids = kids;
-    }
+	constructor( { id, type, by, time, text, kids }) {
+		super( { id, type, by, time } );
+		this.text = text;
+		this.kids = kids;
+	}
 
-    // get comments() {
-    //     const kids = []
-    //     for (const kid of this.kids) {
-    //         let subComment = getItem(kid);
-    //         kids.push(new Comment(subComment['id'], subComment['text'], subComment['kids']));
-    //     }
-    //     return [...kids];
-    // }
+	async populateComments(cb) {
+		this.kids = await this.populateKids(this.kids, cb);
+	}
 }
 
 const getItem = (id) => {
-    return new Promise( (resolve, reject) => {
-        https.get(`${baseUrl}${id}.json`, (res) => {
+	return new Promise( (resolve, reject) => {
+		https.get(`${baseUrl}${id}.json`, (res) => {
         
-            const data = [];
+			const data = [];
 
-            res.on('data', (chunk) => {
-                data.push(chunk);
-            });
+			res.on('data', (chunk) => {
+				data.push(chunk);
+			});
 
-            res.on('end', () => {
-                resolve(JSON.parse(data));
-            })
-        })
-    });
-}
+			res.on('end', () => {
+				resolve(JSON.parse(data));
+			});
+		});
+	});
+};
 
 const populateStories = (storiesUrl, cb) => {
-    https.get(storiesUrl, (res) => {
-        const data = [];
+	https.get(storiesUrl, (res) => {
+		const data = [];
     
-        res.on('data', (chunk) => {
-            data.push(chunk);
-        });
+		res.on('data', (chunk) => {
+			data.push(chunk);
+		});
     
-        res.on('end', () => {
-            ids = [...JSON.parse(data)]
-            for(const id of ids) {
-                const getStory = cb(id);
-                getStory.then((val) => {
-                    const story = new Story(val);
+		res.on('end', () => {
+			const ids = [...JSON.parse(data)];
+			for(const id of ids) {
+				const getStory = cb(id);
+				getStory.then((val) => {
+					const story = new Story(val);
                     
-                    let promisedComments = new Promise((resolve, reject) => {
-                        let comments = story.kids.map(async (id) => {
-                            return new Comment(await cb(id));
-                        });
-                        resolve(comments);
-                    });
+					let promisedComments = new Promise((resolve, reject) => {
+						let comments = story.kids.map(async (id) => {
+							return new Comment(await cb(id));
+						});
+						resolve(comments);
+					});
                     
-                    promisedComments.then((promises) => {
-                        Promise.all(promises).then((comments) => {
-                            story.kids = [...comments];
-                            stories.push(story);
-                        })
-                    });
-                });
-            }
-        })
-    }).on('error', (err) => {
-        console.log("Error: " + err.message);
-    });
-}
+					promisedComments.then((promises) => {
+						Promise.all(promises).then((comments) => {
+							story.kids = [...comments];
+							stories.push(story);
+						});
+					});
+				});
+			}
+		});
+	}).on('error', (err) => {
+		console.log('Error: ' + err.message);
+	});
+};
 
 populateStories(bestStories, getItem);
 // populateStories(jobStories);
