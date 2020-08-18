@@ -15,7 +15,7 @@ const urls = {
 	updates : `${base}updates.json`
 };
 
-const request = (url) => {
+const request = (url, caller) => {
 	return new Promise((resolve, reject) => {
 		https.get(url, (res) => {
 			const data = [];
@@ -29,30 +29,30 @@ const request = (url) => {
 					resolve(JSON.parse(data));
 				} catch (error) {
 					reject({
-						'function' : 'getMaxItem()',
+						'function' : caller,
 						'reason' : error, 
 					});
 				}
 			});
 		}).on('error', (error) => {
 			reject({
-				'function' : 'getMaxItem()',
+				'function' : caller,
 				'reason' : error, 
 			});
 		});
 	});
 };
 
-const getMaxItem = () => request(urls.maxItem);
-const getItem = (id) => request(`${urls.item}${id}.json`);
-const getUser = (id) => request(`${urls.user}${id}.json`);
-const getAskStories = () => request(urls.askStories);
-const getBestStories = () => request(urls.bestStories);
-const getJobStories = () => request(urls.jobStories);
-const getNewStories = () => request(urls.newStories);
-const getShowStories = () => request(urls.showStories);
-const getTopStories = () => request(urls.topStories);
-const getUpdates = () => request(urls.updates);
+const getMaxItem = () => request(urls.maxItem, 'getMaxItem()');
+const getItem = (id) => request(`${urls.item}${id}.json`, 'getItem()');
+const getUser = (id) => request(`${urls.user}${id}.json`, 'getUser()');
+const getAskStories = () => request(urls.askStories, 'getAskStories()');
+const getBestStories = () => request(urls.bestStories, 'getBestStories()');
+const getJobStories = () => request(urls.jobStories, 'getJobStories()');
+const getNewStories = () => request(urls.newStories, 'getNewStories()');
+const getShowStories = () => request(urls.showStories, 'getShowStories()');
+const getTopStories = () => request(urls.topStories, 'getTopStories()');
+const getUpdates = () => request(urls.updates, 'getUpdates()');
 
 const HackerNewsApi = {
 	getMaxItem : getMaxItem,
