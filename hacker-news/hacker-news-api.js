@@ -6,12 +6,12 @@ const urls = {
 	item : `${base}item/`,
 	maxItem : `${base}maxitem.json`,
 	user : `${base}user/`,
-	topStories : `${base}topstories.json?orderBy="$key"&limitToFirst=3`,
-	newStories : `${base}newstories.json?orderBy="$key"&limitToFirst=3`,
-	bestStories : `${base}beststories.json?orderBy="$key"&limitToFirst=3`,
-	askStories : `${base}askstories.json?orderBy="$key"&limitToFirst=3`,
-	showStories : `${base}showstories.json?orderBy="$key"&limitToFirst=3`,
-	jobStories : `${base}jobstories.json?orderBy="$key"&limitToFirst=3`,
+	topStories : `${base}topstories.json?orderBy="$key"&limitToFirst=50`,
+	newStories : `${base}newstories.json?orderBy="$key"&limitToFirst=50`,
+	bestStories : `${base}beststories.json?orderBy="$key"&limitToFirst=50`,
+	askStories : `${base}askstories.json?orderBy="$key"&limitToFirst=50`,
+	showStories : `${base}showstories.json?orderBy="$key"&limitToFirst=50`,
+	jobStories : `${base}jobstories.json?orderBy="$key"&limitToFirst=50`,
 	updates : `${base}updates.json`
 };
 
