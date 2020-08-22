@@ -1,35 +1,83 @@
-const set = (app, memory) => {
-	app.use('/askStories', (req, res, next) => {
-		res.setHeader('Content-Type', 'application/json');
-		res.send(memory.getAskStories());
-	});
-	
-	app.use('/bestStories', (req, res, next) => {
-		res.setHeader('Content-Type', 'application/json');
-		res.send(memory.getBestStories());
-	});
-	
-	app.use('/jobStories', (req, res, next) => {
-		res.setHeader('Content-Type', 'application/json');
-		res.send(memory.getJobStories());
-	});
-	
-	app.use('/newStories', (req, res, next) => {
-		res.setHeader('Content-Type', 'application/json');
-		res.send(memory.getNewStories());
-	});
-	
-	app.use('/showStories', (req, res, next) => {
-		res.setHeader('Content-Type', 'application/json');
-		res.send(memory.getShowStories());
-	});
-	
-	app.use('/topStories', (req, res, next) => {
-		res.setHeader('Content-Type', 'application/json');
-		res.send(memory.getTopStories());
-	});
-};
+const express = require('express');
+const memory = require('./hacker-news-data/runtime-memory');
 
-module.exports = {
-	set
-};
+const router = express.Router();
+
+router.get('/askStories', (req, res, next) => {
+	setImmediate(() => {
+		const params = req.query;
+		try {
+			res.setHeader('Content-Type', 'application/json');
+			res.send(memory.getAskStories());
+		} catch (e) {
+			next(e);
+		}
+	});
+});
+
+router.get('/bestStories', (req, res, next) => {
+	setImmediate(() => {
+		const params = req.query;
+		try {
+			res.setHeader('Content-Type', 'application/json');
+			res.send(memory.getBestStories());
+		} catch (e) {
+			next(e);
+		}
+	});
+});
+
+router.get('/jobStories', (req, res, next) => {
+	setImmediate(() => {
+		const params = req.query;
+		try {
+			res.setHeader('Content-Type', 'application/json');
+			res.send(memory.getJobStories());
+		} catch (e) {
+			next(e);
+		}
+	});
+});
+
+router.get('/newStories', (req, res, next) => {
+	setImmediate(() => {
+		const params = req.query;
+		try {
+			res.setHeader('Content-Type', 'application/json');
+			res.send(memory.getNewStories());
+		} catch (e) {
+			next(e);
+		}
+	});
+});
+
+router.get('/showStories', (req, res, next) => {
+	setImmediate(() => {
+		const params = req.query;
+		try {
+			res.setHeader('Content-Type', 'application/json');
+			res.send(memory.getShowStories());
+		} catch (e) {
+			next(e);
+		}
+	});
+});
+
+router.get('/topStories', (req, res, next) => {
+	setImmediate(() => {
+		const params = req.query;
+		try {
+			res.setHeader('Content-Type', 'application/json');
+			res.send(memory.getTopStories());
+		} catch (e) {
+			next(e);
+		}
+	});
+});
+
+router.use('/', (err, req, res, next) => {
+	// console.log(err);
+	res.status(500).send('Internal Server Error');
+});
+
+module.exports = router;
